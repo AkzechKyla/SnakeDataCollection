@@ -1,8 +1,17 @@
 import json
 import os
+import queue
+import threading
 from pyinaturalist import Observation, enable_logging, get_observations
 from rich import print
 from time import sleep
+
+
+# API rate limit avoidance parameters
+# Please adjust to optimal values
+CONCURRENT_REQUESTS = 60
+SLEEP_AFTER_REQUEST = 60
+
 
 enable_logging()
 
@@ -47,6 +56,7 @@ def fetch_all_observations(taxon_name):
             page=page,
             per_page=per_page,
         )
+        sleep(SLEEP_AFTER_REQUEST)
         observations = Observation.from_json_list(response)
 
         if not observations:
@@ -54,7 +64,6 @@ def fetch_all_observations(taxon_name):
 
         all_observations.extend(observations)
         page += 1  # Go to the next page
-        sleep(120)  # Short delay to avoid hitting API rate limits
 
     return all_observations
 
@@ -79,24 +88,38 @@ def fetch_photo_urls(observations):
     return photo_urls
 
 
+def _fetch(species, threads_queue):
+    observations = fetch_all_observations(species)
+    photo_urls = fetch_photo_urls(observations)
+
+    print(f"Number of observations: {len(observations)}")
+    print(f"Number of photo URLs: {len(photo_urls)}")
+
+    filename = os.path.join(
+        "data",
+        "snake_photos",
+        f"{species.lower().replace(' ', '_')}_photo_urls.json",
+    )
+    os.makedirs(os.path.join("data", "snake_photos"), exist_ok=True)
+
+    save_to_JSON(photo_urls, filename)
+    threads_queue.get()  # Pop queue
+
+
 if __name__ == "__main__":
     filename = os.path.join("data", "snake_species.json")
     species_list = read_species_list(filename)
+    threads = []
 
-    print(species_list)
+    # Queue is needed to limit the concurrent threads running at the same time
+    # to avoid API rate limit
+    threads_queue = queue.Queue(CONCURRENT_REQUESTS)
 
     for species in species_list:
-        observations = fetch_all_observations(species)
-        photo_urls = fetch_photo_urls(observations)
+        t = threading.Thread(target=_fetch, args=(species, threads_queue))
+        threads_queue.put(t)  # Will block if queue is full
+        t.start()
+        threads.append(t)
 
-        print(f"Number of observations: {len(observations)}")
-        print(f"Number of photo URLs: {len(photo_urls)}")
-
-        filename = os.path.join(
-            "data",
-            "snake_photos",
-            f"{species.lower().replace(' ', '_')}_photo_urls.json",
-        )
-        os.makedirs(os.path.join("data", "snake_photos"), exist_ok=True)
-
-        save_to_JSON(photo_urls, filename)
+    for thread in threads:
+        thread.join()
