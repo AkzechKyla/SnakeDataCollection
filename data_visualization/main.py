@@ -1,7 +1,10 @@
 import os
 import json
+import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
+
+matplotlib.use("WebAgg")
 
 
 def load_snake_data(directory_path):
