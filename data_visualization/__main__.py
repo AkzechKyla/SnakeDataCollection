@@ -51,7 +51,7 @@ def plot_snake_data(counts):
     x = np.arange(len(species))  # X-axis positions
     width = 0.4  # Bar width
 
-    fig, ax = plt.subplots(figsize=(12, 6))
+    fig, ax = plt.subplots(figsize=(max(12, len(species) * 0.2), 6))
     ax.bar(
         x - width / 2, static_counts, width, label="static.inaturalist", color="blue"
     )
@@ -68,9 +68,10 @@ def plot_snake_data(counts):
     ax.set_ylabel("Count")
     ax.set_title("Count of Snake Images by Data Source")
     ax.set_xticks(x)
-    ax.set_xticklabels(species, rotation=45, ha="right")
+    ax.set_xticklabels(species, rotation=45, ha="right", fontsize=8)
     ax.legend()
 
+    plt.subplots_adjust(bottom=0.3)
     plt.tight_layout()
     plt.show()
 
