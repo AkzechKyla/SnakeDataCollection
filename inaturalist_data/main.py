@@ -82,7 +82,8 @@ def fetch_photo_urls(observations):
 
 
 if __name__ == "__main__":
-    species_list = read_species_list("../species_scraper/snake_species.txt")
+    filename = os.path.join("data", "snake_species.json")
+    species_list = read_species_list(filename)
 
     print(species_list)
 
@@ -93,5 +94,11 @@ if __name__ == "__main__":
         print(f"Number of observations: {len(observations)}")
         print(f"Number of photo URLs: {len(photo_urls)}")
 
-        filename = f"{species.lower().replace(' ', '_')}_photo_urls.json"
+        filename = os.path.join(
+            "data",
+            "snake_photos",
+            f"{species.lower().replace(' ', '_')}_photo_urls.json",
+        )
+        os.makedirs(os.path.join("data", "snake_photos"), exist_ok=True)
+
         save_to_JSON(photo_urls, filename)

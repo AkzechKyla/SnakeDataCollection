@@ -76,7 +76,7 @@ def plot_snake_data(counts):
 
 
 if __name__ == "__main__":
-    directory_path = "../inaturalist_data/"
+    directory_path = os.path.join("data", "snake_photos")
     raw_data = load_snake_data(directory_path)
     counts = count_image_sources_per_species(raw_data)
     plot_snake_data(counts)

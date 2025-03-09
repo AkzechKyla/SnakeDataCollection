@@ -1,3 +1,4 @@
+import os
 import requests
 import json
 from bs4 import BeautifulSoup
@@ -57,6 +58,10 @@ if __name__ == "__main__":
     if snake_species:
         print("\n".join(snake_species))
         print(f"Total: {len(snake_species)}")
-        save_to_JSON(snake_species, "snake_species.json")
+
+        filename = os.path.join("data", "snake_species.json")
+        os.makedirs("data", exist_ok=True)  # Create 'data' folder
+
+        save_to_JSON(snake_species, filename)
     else:
         print("No snake was found.")
