@@ -1,6 +1,7 @@
 import os
 import requests
 import json
+import threading
 from bs4 import BeautifulSoup
 
 
@@ -27,16 +28,26 @@ def extract_snake_species(soup):
     return snake_species
 
 
+def _scrape(url, all_snake_species):
+    page_content = fetch_page_content(url)
+    if not page_content:
+        return
+
+    soup = BeautifulSoup(page_content, "html.parser")
+    all_snake_species.extend(extract_snake_species(soup))
+
+
 def scrape_snake_species(urls):
     all_snake_species = []
+    threads = []
 
     for url in urls:
-        page_content = fetch_page_content(url)
-        if not page_content:
-            continue
+        t = threading.Thread(target=_scrape, args=(url, all_snake_species))
+        t.start()
+        threads.append(t)
 
-        soup = BeautifulSoup(page_content, "html.parser")
-        all_snake_species.extend(extract_snake_species(soup))
+    for thread in threads:
+        thread.join()
 
     return all_snake_species
 
