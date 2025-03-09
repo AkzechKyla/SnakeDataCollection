@@ -73,6 +73,6 @@ if __name__ == "__main__":
         filename = os.path.join("data", "snake_species.json")
         os.makedirs("data", exist_ok=True)  # Create 'data' folder
 
-        save_to_JSON(snake_species, filename)
+        save_to_JSON(sorted(snake_species), filename)
     else:
         print("No snake was found.")
