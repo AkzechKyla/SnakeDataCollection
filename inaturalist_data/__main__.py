@@ -7,11 +7,9 @@ from time import sleep
 enable_logging()
 
 
-# Reads the snake species from a text file and returns a list
 def read_species_list(filename):
     with open(filename, "r", encoding="utf-8") as file:
-        species_list = [line.strip() for line in file if line.strip()]
-    return species_list
+        return json.load(file)
 
 
 def save_to_JSON(data, filename):
