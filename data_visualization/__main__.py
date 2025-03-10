@@ -42,10 +42,13 @@ def plot_snake_data(counts):
         print("No data available to plot.")
         return
 
-    # Extracting data for plotting
-    species = list(counts.keys())
-    static_counts = [counts[sp][0] for sp in species]
-    open_data_counts = [counts[sp][1] for sp in species]
+    # Sort species by total image count (static + open data)
+    sorted_counts = sorted(counts.items(), key=lambda x: sum(x[1]), reverse=True)
+
+    # Extract sorted data
+    species = [sp[0] for sp in sorted_counts]
+    static_counts = [sp[1][0] for sp in sorted_counts]
+    open_data_counts = [sp[1][1] for sp in sorted_counts]
 
     # Plot settings
     x = np.arange(len(species))  # X-axis positions
