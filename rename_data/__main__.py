@@ -2,10 +2,7 @@ import os
 
 if __name__ == "__main__":
     directory_dict = {
-        "Gervais Worm Snake": 0,
-        "Reddish Rat Snake": 0,
-        "Philippine Cobra": 0,
-        "Smooth-Scaled Mountain Rat Snake": 0
+        "naja_philippinensis": 0,
     }
     directory_path = os.path.join("data", "snakes")
 
@@ -19,6 +16,10 @@ if __name__ == "__main__":
                 for file in os.listdir(file_path):
                     src = os.path.join(file_path, file)
                     dst = os.path.join(file_path, f"{start_count}.jpg")
+
+                    # Prevent FileExistsError
+                    if os.path.exists(dst):
+                        os.remove(dst)
 
                     os.rename(src, dst)
                     start_count += 1
