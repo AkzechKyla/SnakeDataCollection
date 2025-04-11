@@ -49,14 +49,9 @@ def download_snake_data(directory_path, snakes_list):
 
 if __name__ == "__main__":
     snakes_list = [
-        "ophiophagus_hannah",
-        "ptyas_luzonensis",
-        "naja_philippinensis",
-        "coelognathus_erythrurus",
-        "naja_samarensis",
-        "calamaria_gervaisii",
-        "boiga_dendrophila"
+        "naja_sumatrana",
+        "trimeresurus_flavomaculatus",
     ]
-    directory_path = os.path.join("data", "snake_photo_urls")
+    directory_path = os.path.join("data", "snake_photos")
 
     download_snake_data(directory_path, snakes_list)
